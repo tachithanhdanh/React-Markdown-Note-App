@@ -78,10 +78,35 @@ function App() {
     setNotes(newNotes);
   }
 
+  function onUpdateTag(id: string, label: string) {
+    const newTags = tags.map((tag) => {
+      if (tag.id === id) {
+        return { ...tag, label };
+      }
+      return tag;
+    });
+    setTags(newTags);
+  }
+
+  function onDeleteTag(id: string) {
+    const newTags = tags.filter((tag) => tag.id !== id);
+    setTags(newTags);
+  }
+
   return (
     <Container className="my-4">
       <Routes>
-        <Route path="/" element={<NoteList availableTags={tags} notes={noteWithTags}/>} />
+        <Route
+          path="/"
+          element={
+            <NoteList
+              availableTags={tags}
+              notes={noteWithTags}
+              onUpdateTag={onUpdateTag}
+              onDeleteTag={onDeleteTag}
+            />
+          }
+        />
         <Route
           path="/new"
           element={
@@ -92,12 +117,19 @@ function App() {
             />
           }
         />
-        <Route path="/:id" element={<NoteLayout notes={noteWithTags}/>}>
-          <Route index element={<Note onDelete={onDeleteNote}/>} />
-          <Route path="edit" element={<EditNote onSubmit={onUpdateNote}
-              onAddTag={onAddTag}
-              availableTags={tags}/>} />
-        </Route>  
+        <Route path="/:id" element={<NoteLayout notes={noteWithTags} />}>
+          <Route index element={<Note onDelete={onDeleteNote} />} />
+          <Route
+            path="edit"
+            element={
+              <EditNote
+                onSubmit={onUpdateNote}
+                onAddTag={onAddTag}
+                availableTags={tags}
+              />
+            }
+          />
+        </Route>
         <Route path="/*" element={<Navigate to="/" />} />
       </Routes>
     </Container>

@@ -4,15 +4,19 @@ import { Link } from "react-router-dom";
 import ReactSelect from "react-select";
 import { Note, Tag } from "./App";
 import NoteCard from "./NoteCard";
+import EditTagsModal from "./EditTagsModal";
 
 type NoteListProps = {
   availableTags: Tag[];
   notes: Note[];
+  onUpdateTag: (id: string, label: string) => void;
+  onDeleteTag: (id: string) => void;
 };
 
-export default function NoteList({ availableTags, notes }: NoteListProps) {
+export default function NoteList({ availableTags, notes, onUpdateTag, onDeleteTag }: NoteListProps) {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [title, setTitle] = useState<string>("");
+  const [showEditTagsModal, setShowEditTagsModal] = useState<boolean>(false);
 
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
@@ -23,7 +27,9 @@ export default function NoteList({ availableTags, notes }: NoteListProps) {
       // if selectedTags is not empty and note does not have all selected tags, return false
       if (
         selectedTags.length > 0 &&
-        !selectedTags.every((tag) => note.tags.some(noteTag => noteTag.id === tag.id))
+        !selectedTags.every((tag) =>
+          note.tags.some((noteTag) => noteTag.id === tag.id)
+        )
       ) {
         return false;
       }
@@ -44,7 +50,12 @@ export default function NoteList({ availableTags, notes }: NoteListProps) {
             <Link to="/new">
               <Button variant="primary">Create</Button>
             </Link>
-            <Button variant="outline-secondary">Edit Tags</Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setShowEditTagsModal(true)}
+            >
+              Edit Tags
+            </Button>
           </Stack>
         </Col>
       </Row>
@@ -86,10 +97,17 @@ export default function NoteList({ availableTags, notes }: NoteListProps) {
       <Row xs={1} sm={2} lg={3} xl={4} className="g-3">
         {filteredNotes.map((note) => (
           <Col key={note.id}>
-            <NoteCard id={note.id} title={note.title} tags={note.tags}/>
-          </Col>  
+            <NoteCard id={note.id} title={note.title} tags={note.tags} />
+          </Col>
         ))}
       </Row>
+      <EditTagsModal
+        show={showEditTagsModal}
+        handleClose={() => setShowEditTagsModal(false)}
+        availableTags={availableTags}
+        onUpdateTag={onUpdateTag}
+        onDeleteTag={onDeleteTag}
+      />
     </>
   );
 }
