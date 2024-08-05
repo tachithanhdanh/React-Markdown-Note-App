@@ -9,23 +9,31 @@ type NoteFormProps = {
   onSubmit: (note: NoteData) => void;
   onAddTag: (tag: Tag) => void;
   availableTags: Tag[];
-};
+} & Partial<NoteData>;
+// Parital<NoteData> is used to make the NoteData properties optional
+// You can either pass all the properties of NoteData or none of them
 
-export default function NoteForm({ onSubmit, onAddTag, availableTags } : NoteFormProps) {
+export default function NoteForm({
+  onSubmit,
+  onAddTag,
+  availableTags,
+  title = "",
+  markdown = "",
+  tags = [],
+}: NoteFormProps) {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
   const navigate = useNavigate();
-
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     onSubmit({
       title: titleRef.current!.value,
       markdown: markdownRef.current!.value,
-      tags: selectedTags
+      tags: selectedTags,
     });
-    navigate('..');
+    navigate("..");
   }
 
   return (
@@ -35,43 +43,55 @@ export default function NoteForm({ onSubmit, onAddTag, availableTags } : NoteFor
           <Col>
             <Form.Group controlId="title">
               <Form.Label>Title</Form.Label>
-              <Form.Control type="text" required ref={titleRef}/>
+              <Form.Control type="text" required ref={titleRef} defaultValue={title} />
             </Form.Group>
           </Col>
           <Col>
             <Form.Group controlId="tags">
               <Form.Label>Tags</Form.Label>
-              <ReactSelectCreatable 
-                options={availableTags.map(tag => ({ value: tag.id, label: tag.label }))}
-                onCreateOption={ (label) => {
+              <ReactSelectCreatable
+                options={availableTags.map((tag) => ({
+                  value: tag.id,
+                  label: tag.label,
+                }))}
+                onCreateOption={(label) => {
                   const tag: Tag = { id: uuidV4(), label };
                   onAddTag(tag);
                   setSelectedTags([...selectedTags, tag]);
                 }}
-                value={
-                  selectedTags.map(tag => ({ value: tag.id, label: tag.label }))
+                value={selectedTags.map((tag) => ({
+                  value: tag.id,
+                  label: tag.label,
+                }))}
+                onChange={(tags) =>
+                  setSelectedTags(
+                    tags.map((tag) => ({ id: tag.value, label: tag.label }))
+                  )
                 }
-                onChange={(tags) => setSelectedTags(tags.map(tag => ({ id: tag.value, label: tag.label })))}
-                isMulti 
+                isMulti
               />
             </Form.Group>
           </Col>
         </Row>
         <Form.Group controlId="markdown">
           <Form.Label>Body</Form.Label>
-          <Form.Control as="textarea" required rows={15} ref={markdownRef}/>
+          <Form.Control
+            as="textarea"
+            required
+            rows={15}
+            ref={markdownRef}
+            defaultValue={markdown}
+          />
         </Form.Group>
         <Stack gap={2} className="justify-content-end" direction="horizontal">
           <Button variant="primary" type="submit">
             Save
           </Button>
           <Link to="..">
-            <Button variant="outline-secondary">
-              Cancel
-            </Button>
+            <Button variant="outline-secondary">Cancel</Button>
           </Link>
         </Stack>
       </Stack>
     </Form>
-  )
+  );
 }

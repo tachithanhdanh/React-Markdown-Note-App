@@ -1,0 +1,20 @@
+.card {
+  /* ease-in-out: Specifies a transition effect with a slow start and end */
+  transition: all ease-in-out 100ms;
+  -webkit-transform: translateY(-5px);
+  transform: translateY(-5px);
+}
+
+.card:hover,
+.card:focus {
+  /* translateY means move the element up or down */
+  -webkit-transform: translateY(-5px);
+  transform: translateY(-5px);
+  /* boxShadow: h-shadow v-shadow blur spread color */
+  /* h-shadow: Required. The horizontal offset of the shadow. A positive value puts the shadow on the right side of the box, a negative value puts the shadow on the left side of the box */
+  /* v-shadow: Required. The vertical offset of the shadow. A positive value puts the shadow below the box, a negative value puts the shadow above the box */
+  /* blur: Optional. The blur radius. The higher the value, the more blurred the shadow will be */
+  /* spread: Optional. The spread radius. A positive value increases the size of the shadow, a negative value decreases the size of the shadow */
+  /* color: Optional. The color of the shadow. The default value is the text color */
+  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2);
+}
