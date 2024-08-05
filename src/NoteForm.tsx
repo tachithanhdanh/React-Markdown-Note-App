@@ -21,13 +21,17 @@ export default function NoteForm({
   markdown = "",
   tags = [],
 }: NoteFormProps) {
+  // Create references for the title and markdown input fields
+  // the useRef hook is used to access the input field values
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // useNavigate hook is used to navigate to a different route
 
+  // Function to handle form submission
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault();
+    // prevent the default form submission which is reloading the page
+    event.preventDefault(); 
     onSubmit({
       title: titleRef.current!.value,
       markdown: markdownRef.current!.value,

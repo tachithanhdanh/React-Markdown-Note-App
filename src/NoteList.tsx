@@ -14,10 +14,12 @@ type NoteListProps = {
 };
 
 export default function NoteList({ availableTags, notes, onUpdateTag, onDeleteTag }: NoteListProps) {
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  const [title, setTitle] = useState<string>("");
-  const [showEditTagsModal, setShowEditTagsModal] = useState<boolean>(false);
+  // Define the state for selectedTags, title, and showEditTagsModal
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]); // State for selected tags
+  const [title, setTitle] = useState<string>(""); // State for title
+  const [showEditTagsModal, setShowEditTagsModal] = useState<boolean>(false); // State for showing the edit tags modal
 
+  // Filter notes based on selected tags and title
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
       // if title is not empty and note title does not include title, return false
@@ -37,19 +39,23 @@ export default function NoteList({ availableTags, notes, onUpdateTag, onDeleteTa
       // or if title is empty and selectedTags is empty, return true
       return true;
     });
-  }, [notes, title, selectedTags]);
+  }, [notes, title, selectedTags]); // Recalculate when notes, title, or selectedTags change
 
   return (
     <>
+      {/*Create a row with a title and buttons to create a new note and edit tags */}
       <Row className="align-items-center mb-4">
         <Col>
           <h1>Notes</h1>
         </Col>
         <Col xs="auto">
+          {/* Create a stack with buttons to create a new note and edit tags */}
           <Stack gap={2} direction="horizontal">
+            {/* redirect to /new when create button is clicked */}
             <Link to="/new">
               <Button variant="primary">Create</Button>
             </Link>
+            {/* Show edit tags modal when edit tags button is clicked */}
             <Button
               variant="outline-secondary"
               onClick={() => setShowEditTagsModal(true)}
@@ -63,10 +69,12 @@ export default function NoteList({ availableTags, notes, onUpdateTag, onDeleteTa
         <Row className="mb-4">
           <Col>
             <Form.Group controlId="title">
+              {/* Search bar for title */}
               <Form.Label>Title</Form.Label>
               <Form.Control
                 type="text"
                 value={title}
+                // Update the title when the input field changes
                 onChange={(element) => setTitle(element.target.value)}
               />
             </Form.Group>
@@ -74,15 +82,20 @@ export default function NoteList({ availableTags, notes, onUpdateTag, onDeleteTa
           <Col>
             <Form.Group controlId="tags">
               <Form.Label>Tags</Form.Label>
+              {/* ReactSelect component for selecting tags */}
               <ReactSelect
+                // convert availableTags to options
                 options={availableTags.map((tag) => ({
                   value: tag.id,
                   label: tag.label,
                 }))}
+                // convert selectedTags to value
+                // value represents the selected tags
                 value={selectedTags.map((tag) => ({
                   value: tag.id,
                   label: tag.label,
                 }))}
+                // Update the selected tags when the input field changes
                 onChange={(tags) =>
                   setSelectedTags(
                     tags.map((tag) => ({ id: tag.value, label: tag.label }))
@@ -94,16 +107,21 @@ export default function NoteList({ availableTags, notes, onUpdateTag, onDeleteTa
           </Col>
         </Row>
       </Form>
+      {/* Create a row with a grid of NoteCard components */}
       <Row xs={1} sm={2} lg={3} xl={4} className="g-3">
+        {/* Render the NoteCard component for each note */}
         {filteredNotes.map((note) => (
+          // Render the NoteCard component with the note ID, title, and tags
           <Col key={note.id}>
             <NoteCard id={note.id} title={note.title} tags={note.tags} />
           </Col>
         ))}
       </Row>
+      {/* The EditTagsModal component */}
+      {/* Modal to show the tags and edit or delete if necessary */}
       <EditTagsModal
         show={showEditTagsModal}
-        handleClose={() => setShowEditTagsModal(false)}
+        handleClose={() => setShowEditTagsModal(false)} // Close the modal when the close button is clicked
         availableTags={availableTags}
         onUpdateTag={onUpdateTag}
         onDeleteTag={onDeleteTag}
